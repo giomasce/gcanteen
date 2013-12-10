@@ -1,8 +1,11 @@
 package gio.gcanteen;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -17,6 +20,9 @@ import java.security.cert.CertificateFactory;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -93,6 +99,18 @@ public class NetworkUtils {
 
 		// If we arrive here, then the server replied with an unexpected code
 		throw new IOException("Server replid with: " + response + conn.getResponseMessage());
+	}
+	
+	public static JSONObject connToJSON(HttpURLConnection conn) throws IOException, JSONException {
+		InputStream inputStream = conn.getInputStream();
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 4096);
+		StringBuilder stringBuilder = new StringBuilder();
+		String line = null;
+		while ((line = bufferedReader.readLine()) != null) {
+			stringBuilder.append(line + "\n");
+		}
+		inputStream.close();
+		return new JSONObject(stringBuilder.toString());
 	}
 	
 	public void setCredentials(final LoginCredentials loginCredentials) {
