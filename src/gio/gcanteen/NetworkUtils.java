@@ -65,15 +65,19 @@ public class NetworkUtils {
 		return context;
 	}
 	
-	public HttpsURLConnection connectSSLURL(String url) throws MalformedURLException {
+	public HttpURLConnection connectSSLURL(String url) throws MalformedURLException {
 		return this.connectSSLURL(new URL(url));
 	}
 	
-	public HttpsURLConnection connectSSLURL(URL url) {
-		HttpsURLConnection conn;
+	public HttpURLConnection connectSSLURL(URL url) {
+		HttpURLConnection conn;
 		try {
-			conn = (HttpsURLConnection) url.openConnection();
-			conn.setSSLSocketFactory(this.getTrustedSSLContext().getSocketFactory());
+			conn = (HttpURLConnection) url.openConnection();
+			try {
+				((HttpsURLConnection) conn).setSSLSocketFactory(this.getTrustedSSLContext().getSocketFactory());
+			} catch (ClassCastException e) {
+				// If the protocol is not HTTPS, we just skip this phase
+			}
 		} catch (Exception e) {
 			// We should never arrive here...
 			Log.e(this.getClass().getName(), "Couldn't create SSL context", e);
@@ -85,12 +89,12 @@ public class NetworkUtils {
 		return conn;
 	}
 	
-	public HttpsURLConnection connectAndCheck(String url) throws UnauthorizedException, IOException {
+	public HttpURLConnection connectAndCheck(String url) throws UnauthorizedException, IOException {
 		return this.connectAndCheck(new URL(url));
 	}
 	
-	public HttpsURLConnection connectAndCheck(URL url) throws UnauthorizedException, IOException {
-		HttpsURLConnection conn = this.connectSSLURL(url);
+	public HttpURLConnection connectAndCheck(URL url) throws UnauthorizedException, IOException {
+		HttpURLConnection conn = this.connectSSLURL(url);
 		conn.connect();
 		
 		int response = conn.getResponseCode();
@@ -111,6 +115,27 @@ public class NetworkUtils {
 		}
 		inputStream.close();
 		return new JSONObject(stringBuilder.toString());
+	}
+	
+	public JSONObject connectAndGetJSON(String url) throws UnauthorizedException, IOException {
+		HttpURLConnection conn;
+		try {
+			conn = this.connectAndCheck(url);
+		} catch (MalformedURLException e) {
+			// We should never arrive here
+			Log.e(this.getClass().getName(), "Internal error when creating the request URL", e);
+			return null;
+		}
+		
+		JSONObject json;
+		try {
+			json = NetworkUtils.connToJSON(conn);
+		} catch (JSONException e) {
+			Log.w(this.getClass().getName(), "Error while decoding JSON", e);
+			return null;
+		}
+		
+		return json;
 	}
 	
 	public void setCredentials(final LoginCredentials loginCredentials) {

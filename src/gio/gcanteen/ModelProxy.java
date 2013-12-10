@@ -1,9 +1,6 @@
 package gio.gcanteen;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,9 +9,11 @@ import android.util.Log;
 
 public class ModelProxy {
 	
+	public final static int SUPPORTED_VERSION = 1;
 	public final static String BASE_URL = "https://uz.sns.it/mensa/api/";
 	public final static String VERSION_URL = "version.json";
-	public final static int SUPPORTED_VERSION = 1;
+	public final static String VERSIONED_BASE_URL = BASE_URL + "v" + SUPPORTED_VERSION + "/"; 
+	public final static String STATEMENTS_URL = "statements.json";
 	
 	public final static String MIN_VERSION_TAG = "min_version";
 	public final static String MAX_VERSION_TAG = "max_version";
@@ -26,22 +25,8 @@ public class ModelProxy {
 	}
 	
 	public boolean checkVersion() throws IOException, UnauthorizedException {
-		HttpsURLConnection conn;
-		try {
-			conn = this.networkUtils.connectAndCheck(BASE_URL + VERSION_URL);
-		} catch (MalformedURLException e) {
-			// We should never arrive here
-			Log.e(this.getClass().getName(), "Internal error when creating the request URL", e);
-			return false;
-		}
-		
-		JSONObject json;
-		try {
-			json = NetworkUtils.connToJSON(conn);
-		} catch (JSONException e) {
-			Log.w(this.getClass().getName(), "Error while decoding JSON", e);
-			return false;
-		}
+		JSONObject json = this.networkUtils.connectAndGetJSON(BASE_URL + VERSION_URL);
+		if (json == null) return false;
 		
 		int min_version, max_version;
 		try {
@@ -53,6 +38,11 @@ public class ModelProxy {
 		}
 		
 		return (min_version <= SUPPORTED_VERSION) && (SUPPORTED_VERSION <= max_version);
+	}
+	
+	public void loadStatements() throws UnauthorizedException, IOException {
+		JSONObject json = this.networkUtils.connectAndGetJSON(VERSIONED_BASE_URL + STATEMENTS_URL);
+		if (json == null) return;
 	}
 
 }
