@@ -1,0 +1,113 @@
+package gio.gcanteen;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
+
+public class NetworkUtils {
+	
+	public final static int READ_TIMEOUT = 10000;
+	public final static int CONNECT_TIMEOUT = 1500;
+	
+	private Context context;
+
+	public NetworkUtils(Context context) {
+		this.context = context;
+	}
+	
+	public SSLContext getTrustedSSLContext() throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+		CertificateFactory cf = CertificateFactory.getInstance("X.509");
+		InputStream certIS = this.context.getResources().openRawResource(R.raw.uz_cacert);
+		Certificate ca;
+		try {
+			ca = cf.generateCertificate(certIS);
+		} finally {
+			certIS.close();
+		}
+		
+		String keyStoreType = KeyStore.getDefaultType();
+		KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+		keyStore.load(null, null);
+		keyStore.setCertificateEntry("ca", ca);
+		
+		String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+		tmf.init(keyStore);
+		
+		SSLContext context = SSLContext.getInstance("TLS");
+		context.init(null, tmf.getTrustManagers(), null);
+		
+		return context;
+	}
+	
+	public HttpsURLConnection connectSSLURL(String url) throws MalformedURLException {
+		return this.connectSSLURL(new URL(url));
+	}
+	
+	public HttpsURLConnection connectSSLURL(URL url) {
+		HttpsURLConnection conn;
+		try {
+			conn = (HttpsURLConnection) url.openConnection();
+			conn.setSSLSocketFactory(this.getTrustedSSLContext().getSocketFactory());
+		} catch (Exception e) {
+			// We should never arrive here...
+			Log.e(this.getClass().getName(), "Couldn't create SSL context", e);
+			return null;
+		}
+		conn.setReadTimeout(READ_TIMEOUT);
+		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setDoInput(true);
+		return conn;
+	}
+	
+	public HttpsURLConnection connectAndCheck(String url) throws UnauthorizedException, IOException {
+		return this.connectAndCheck(new URL(url));
+	}
+	
+	public HttpsURLConnection connectAndCheck(URL url) throws UnauthorizedException, IOException {
+		HttpsURLConnection conn = this.connectSSLURL(url);
+		conn.connect();
+		
+		int response = conn.getResponseCode();
+		if (response == 200) return conn;
+		if (response == 401) throw new UnauthorizedException("Server replid with: " + response + conn.getResponseMessage());
+
+		// If we arrive here, then the server replied with an unexpected code
+		throw new IOException("Server replid with: " + response + conn.getResponseMessage());
+	}
+	
+	public void setCredentials(final LoginCredentials loginCredentials) {
+		Authenticator.setDefault(new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(loginCredentials.username, loginCredentials.password.toCharArray());
+			}
+		});
+	}
+    
+    boolean testConnectivity() {
+    	ConnectivityManager connMgr = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    	NetworkInfo info = connMgr.getActiveNetworkInfo();
+    	if (info != null && info.isConnected()) return true;
+    	else return false;
+    }
+
+}
