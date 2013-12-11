@@ -4,10 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -35,6 +33,7 @@ public class NetworkUtils {
 	public final static int CONNECT_TIMEOUT = 1500;
 	
 	private Context context;
+	private LoginCredentials loginCredentials = null;
 
 	public NetworkUtils(Context context) {
 		this.context = context;
@@ -65,11 +64,11 @@ public class NetworkUtils {
 		return context;
 	}
 	
-	public HttpURLConnection connectSSLURL(String url) throws MalformedURLException {
-		return this.connectSSLURL(new URL(url));
+	public HttpURLConnection connectURL(String url) throws MalformedURLException {
+		return this.connectURL(new URL(url));
 	}
 	
-	public HttpURLConnection connectSSLURL(URL url) {
+	public HttpURLConnection connectURL(URL url) {
 		HttpURLConnection conn;
 		try {
 			conn = (HttpURLConnection) url.openConnection();
@@ -85,6 +84,8 @@ public class NetworkUtils {
 		}
 		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
+		conn.setRequestProperty("Authorization", this.loginCredentials.toHTTPAuthValue());
+		Log.e("DEBUG", this.loginCredentials.toHTTPAuthValue());
 		conn.setDoInput(true);
 		return conn;
 	}
@@ -94,7 +95,7 @@ public class NetworkUtils {
 	}
 	
 	public HttpURLConnection connectAndCheck(URL url) throws UnauthorizedException, IOException {
-		HttpURLConnection conn = this.connectSSLURL(url);
+		HttpURLConnection conn = this.connectURL(url);
 		conn.connect();
 		
 		int response = conn.getResponseCode();
@@ -139,11 +140,12 @@ public class NetworkUtils {
 	}
 	
 	public void setCredentials(final LoginCredentials loginCredentials) {
-		Authenticator.setDefault(new Authenticator() {
+		this.loginCredentials = loginCredentials;
+		/*Authenticator.setDefault(new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(loginCredentials.username, loginCredentials.password.toCharArray());
 			}
-		});
+		});*/
 	}
     
     boolean testConnectivity() {
