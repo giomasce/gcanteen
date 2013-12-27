@@ -3,9 +3,11 @@ package gio.gcanteen;
 import java.util.Collection;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -46,6 +48,18 @@ public class MainActivity extends Activity {
     	}
     }
     
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    		case R.id.action_settings:
+    			Intent intent = new Intent(this, SettingsActivity.class);
+    			startActivity(intent);
+    			return true;
+    		default:
+    			return super.onOptionsItemSelected(item);
+    	}
+    }
+    
     private class GetStatementsTask extends AsyncTask<Void, Void, Void> {
     	private TextView text;
 		private ModelProxy modelProxy;
@@ -73,7 +87,7 @@ public class MainActivity extends Activity {
     	@Override
     	protected void onPostExecute(Void void_) {
     		if (this.exceptionThrown != null) {
-    			this.text.append("\nSomething bad happened...\n");
+    			this.text.append("\n" + getString(R.string.something_bad_happened));
     			this.text.append(this.exceptionThrown.toString());
     		} else {
     			if (this.logged_in) {
@@ -82,7 +96,7 @@ public class MainActivity extends Activity {
     					this.text.append("\n" + statement.toFormattedString());
     				}
     			} else {
-    				this.text.append("\n" + R.string.not_logged_in);
+    				this.text.append("\n" + getString(R.string.not_logged_in));
     			}
     		}
     	}
@@ -117,20 +131,20 @@ public class MainActivity extends Activity {
     	@Override
     	protected void onPostExecute(Void void_) {
     		if (this.exceptionThrown != null) {
-    			this.text.append("\n" + R.string.something_bad_happened);
+    			this.text.append("\n" + getString(R.string.something_bad_happened));
     			this.text.append(this.exceptionThrown.toString());
     		} else {
     			if (this.logged_in) {
-    				this.text.append("\n" + R.string.login_successful);
+    				this.text.append("\n" + getString(R.string.login_successful));
     				if (this.compatible_version) {
-    					this.text.append("\n" + R.string.protocol_compatible);
+    					this.text.append("\n" + getString(R.string.protocol_compatible));
     		    		GetStatementsTask getStatementsTask = new GetStatementsTask(this.modelProxy, this.text);
     		    		getStatementsTask.execute();
     				} else {
-    					this.text.append("\n" + R.string.protocol_not_compatible);
+    					this.text.append("\n" + getString(R.string.protocol_not_compatible));
     				}
     			} else {
-    				this.text.append("\n" + R.string.login_failed);
+    				this.text.append("\n" + getString(R.string.login_failed));
     			}
     		}
     	}
