@@ -7,6 +7,12 @@
     <string name="password_hint">Password</string>
     <string name="button_login">Login</string>
     
-    <string name="waiting_login">Waiting for login...</string>
+    <string name="waiting_login">Waiting for login…</string>
+    <string name="something_bad_happened">Something bad happened…</string>
+    <string name="login_successful">Login successful!</string>
+    <string name="login_failed">Login failed…</string>
+    <string name="protocol_compatible">Protocol version compatible with server!</string>
+    <string name="protocol_not_compatible">Protocol version NOT compatible with server…</string>
+    <string name="not_logged_in">Not logged in…</string>
 
 </resources>

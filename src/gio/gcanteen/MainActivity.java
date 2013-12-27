@@ -23,7 +23,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -83,7 +82,7 @@ public class MainActivity extends Activity {
     					this.text.append("\n" + statement.toFormattedString());
     				}
     			} else {
-    				this.text.append("\nNot logged in...");
+    				this.text.append("\n" + R.string.not_logged_in);
     			}
     		}
     	}
@@ -118,20 +117,20 @@ public class MainActivity extends Activity {
     	@Override
     	protected void onPostExecute(Void void_) {
     		if (this.exceptionThrown != null) {
-    			this.text.append("\nSomething bad happened...\n");
+    			this.text.append("\n" + R.string.something_bad_happened);
     			this.text.append(this.exceptionThrown.toString());
     		} else {
     			if (this.logged_in) {
-    				this.text.append("\nLogin successful!");
+    				this.text.append("\n" + R.string.login_successful);
     				if (this.compatible_version) {
-    					this.text.append("\nProtocol version compatible with server!");
+    					this.text.append("\n" + R.string.protocol_compatible);
     		    		GetStatementsTask getStatementsTask = new GetStatementsTask(this.modelProxy, this.text);
     		    		getStatementsTask.execute();
     				} else {
-    					this.text.append("\nProtocol version NOT compatible with server...");
+    					this.text.append("\n" + R.string.protocol_not_compatible);
     				}
     			} else {
-    				this.text.append("\nLogin failed...");
+    				this.text.append("\n" + R.string.login_failed);
     			}
     		}
     	}
