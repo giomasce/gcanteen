@@ -85,7 +85,7 @@ public class NetworkUtils {
 		conn.setReadTimeout(READ_TIMEOUT);
 		conn.setConnectTimeout(CONNECT_TIMEOUT);
 		conn.setRequestProperty("Authorization", this.loginCredentials.toHTTPAuthValue());
-		Log.e("DEBUG", this.loginCredentials.toHTTPAuthValue());
+		//Log.d("DEBUG", this.loginCredentials.toHTTPAuthValue());
 		conn.setDoInput(true);
 		return conn;
 	}

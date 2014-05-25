@@ -4,12 +4,13 @@ import java.util.Collection;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -35,8 +36,9 @@ public class MainActivity extends Activity {
     	TextView textView = (TextView) findViewById(R.id.res_text_view);
     	textView.setText("Button pressed!");
     	
-		String username = ((EditText) findViewById(R.id.username)).getText().toString();
-		String password = ((EditText) findViewById(R.id.password)).getText().toString();
+    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		String username = sharedPreferences.getString("pref_username", null);
+		String password = sharedPreferences.getString("pref_password", null);
 		this.networkUtils.setCredentials(new LoginCredentials(username, password));
 		
     	if (this.networkUtils.testConnectivity()) {

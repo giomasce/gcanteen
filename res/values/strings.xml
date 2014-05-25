@@ -4,7 +4,9 @@
     <string name="app_name">gCanteen</string>
     <string name="action_settings">Settings</string>
     <string name="username_hint">Username</string>
+    <string name="username_summary">Your username on the UZ network</string>
     <string name="password_hint">Password</string>
+    <string name="password_summary">Your password on the UZ network</string>
     <string name="button_login">Login</string>
     
     <string name="waiting_login">Waiting for login…</string>
