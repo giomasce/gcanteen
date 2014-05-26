@@ -4,15 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <Button 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="80"
+        android:orientation="vertical" >
+
+        <android.support.v7.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            tools:ignore="NestedWeights" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="70" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="100"
+                android:contentDescription="@string/app_logo_content_description"
+                android:src="@drawable/app_logo" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="15" />
+
+    </LinearLayout>
+
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_login"
-        android:onClick="loginClicked"/>
-    <TextView 
+        android:onClick="loginClicked"
+        android:text="@string/button_login" />
+
+    <TextView
+        android:id="@+id/res_text_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/waiting_login"
-        android:id="@+id/res_text_view"/>
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:text="@string/waiting_login" />
     
 </LinearLayout>

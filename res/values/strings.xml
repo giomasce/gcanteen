@@ -27,5 +27,6 @@
     <string-array name="provider_entry_values">
         <item>uz</item>
     </string-array>
+        <string name="app_logo_content_description">Application logo</string>
     
 </resources>

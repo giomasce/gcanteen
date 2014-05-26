@@ -5,3 +5,4 @@ inkscape -d 72 -e res/drawable-hdpi/ic_launcher.png artwork/scalable/ic_launcher
 inkscape -d 96 -e res/drawable-xhdpi/ic_launcher.png artwork/scalable/ic_launcher.svg
 inkscape -d 144 -e res/drawable-xxhdpi/ic_launcher.png artwork/scalable/ic_launcher.svg
 inkscape -d 512 -e ic_launcher-web.png artwork/scalable/ic_launcher.svg
+inkscape -d 512 -e res/drawable/app_logo.png artwork/scalable/ic_launcher.svg
