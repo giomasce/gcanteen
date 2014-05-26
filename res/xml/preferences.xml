@@ -9,4 +9,10 @@
         android:title="@string/password_hint"
         android:summary="@string/password_summary"
         android:inputType="textPassword"/>
+    <ListPreference 
+        android:key="pref_provider"
+        android:title="@string/provider_hint"
+        android:summary="@string/provider_summary"
+        android:entries="@array/provider_entries"
+        android:entryValues="@array/provider_entry_values"/>
 </PreferenceScreen>

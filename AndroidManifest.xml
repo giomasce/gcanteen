@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name="gio.gcanteen.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/settings_activity_title" >
         </activity>
     </application>
 
