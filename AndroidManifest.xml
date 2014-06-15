@@ -5,7 +5,7 @@
     android:versionName="0.1" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="4"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -28,6 +28,10 @@
             android:name="gio.gcanteen.SettingsActivity"
             android:label="@string/settings_activity_title" >
         </activity>
-    </application>
+        <activity 
+            android:name="gio.gcanteen.StatementsActivity"
+            android:label="@string/app_name">
+      	</activity>
+	</application>
 
 </manifest>

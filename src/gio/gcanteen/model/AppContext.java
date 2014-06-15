@@ -52,4 +52,8 @@ public class AppContext {
 		return this.provider;
 	}
 
+	public Context getContext() {
+		return this.context;
+	}
+
 }

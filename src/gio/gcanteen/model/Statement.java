@@ -21,6 +21,12 @@ public class Statement {
 				"</i>): " + this.getValue();
 	}
 	
+	public String toString() {
+		return "@" + this.getUsername() +
+				" (" + this.getTimestamp() +
+				"): " + this.getValue();
+	}
+	
 	public String getUsername() {
 		return username;
 	}

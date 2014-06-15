@@ -30,8 +30,6 @@ public class ModelProxy {
 	private Vector<Statement> statements = null;
 	
 	public boolean checkVersion() throws IOException, UnauthorizedException {
-		Log.d("gCanteen", AppContext.getAppContext().getProvider().toString());
-		Log.d("gCanteen", AppContext.getAppContext().getProvider().getBaseUrl());
 		JSONObject json = AppContext.getAppContext().getNetworkUtils().connectAndGetJSON(AppContext.getAppContext().getProvider().getBaseUrl() + VERSION_URL);
 		if (json == null) return false;
 		

@@ -2,9 +2,6 @@ package gio.gcanteen;
 
 import gio.gcanteen.model.AppContext;
 import gio.gcanteen.model.ModelProxy;
-import gio.gcanteen.model.Statement;
-
-import java.util.Collection;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -38,7 +35,7 @@ public class SplashActivity extends Activity {
 		
     	if (appContext.getNetworkUtils().testConnectivity()) {
     		textView.append("\nConnection available!");
-    		ExecuteLoginTask executeLoginTask = new ExecuteLoginTask(appContext.getModelProxy(), textView);
+    		ExecuteLoginTask executeLoginTask = new ExecuteLoginTask(appContext.getModelProxy(), textView, this);
     		executeLoginTask.execute();
     	} else {
     		textView.append("\nNo connection available...");
@@ -57,61 +54,20 @@ public class SplashActivity extends Activity {
     	}
     }
     
-    private class GetStatementsTask extends AsyncTask<Void, Void, Void> {
-    	private TextView text;
-		private ModelProxy modelProxy;
-
-    	private Exception exceptionThrown = null;
-    	private boolean logged_in = true;
-
-		public GetStatementsTask(ModelProxy modelProxy, TextView text) {
-			this.modelProxy = modelProxy;
-    		this.text = text;
-    	}
-
-    	@Override
-    	protected Void doInBackground(Void... voids) {
-    		try {
-    			this.modelProxy.loadStatements();
-    		} catch (UnauthorizedException e) {
-    			this.logged_in = false;
-			} catch (Exception e) {
-				this.exceptionThrown = e;
-			}
-    		return null;
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(Void void_) {
-    		if (this.exceptionThrown != null) {
-    			this.text.append("\n" + getString(R.string.something_bad_happened));
-    			this.text.append(this.exceptionThrown.toString());
-    			Log.e("gCanteen", "exception", this.exceptionThrown);
-    		} else {
-    			if (this.logged_in) {
-    				Collection<Statement> statements = this.modelProxy.getStatements();
-    				for (Statement statement : statements) {
-    					this.text.append("\n" + statement.toFormattedString());
-    				}
-    			} else {
-    				this.text.append("\n" + getString(R.string.not_logged_in));
-    			}
-    		}
-    	}
-    }
-    
     private class ExecuteLoginTask extends AsyncTask<Void, Void, Void> {
     	private TextView text;
 		private ModelProxy modelProxy;
+		private Activity callingActivity;
 
     	private Exception exceptionThrown = null;
     	private boolean logged_in = true;
     	
     	private boolean compatible_version;
 
-		public ExecuteLoginTask(ModelProxy modelProxy, TextView text) {
+		public ExecuteLoginTask(ModelProxy modelProxy, TextView text, Activity callingActivity) {
 			this.modelProxy = modelProxy;
     		this.text = text;
+    		this.callingActivity = callingActivity;
     	}
 
     	@Override
@@ -137,8 +93,10 @@ public class SplashActivity extends Activity {
     				this.text.append("\n" + getString(R.string.login_successful));
     				if (this.compatible_version) {
     					this.text.append("\n" + getString(R.string.protocol_compatible));
-    		    		GetStatementsTask getStatementsTask = new GetStatementsTask(this.modelProxy, this.text);
-    		    		getStatementsTask.execute();
+    		    		//GetStatementsTask getStatementsTask = new GetStatementsTask(this.modelProxy, this.text);
+    		    		//getStatementsTask.execute();
+    					Intent intent = new Intent(this.callingActivity, StatementsActivity.class);
+    					startActivity(intent);
     				} else {
     					this.text.append("\n" + getString(R.string.protocol_not_compatible));
     				}
