@@ -1,4 +1,4 @@
-package gio.gcanteen;
+package gio.gcanteen.model;
 
 import android.util.Base64;
 

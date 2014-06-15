@@ -1,28 +1,27 @@
 package gio.gcanteen;
 
+import gio.gcanteen.model.AppContext;
+import gio.gcanteen.model.ModelProxy;
+import gio.gcanteen.model.Statement;
+
 import java.util.Collection;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
-	
-	NetworkUtils networkUtils;
-	ModelProxy modelProxy;
+public class SplashActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.networkUtils = new NetworkUtils(this);
-        this.modelProxy = new ModelProxy(networkUtils);
+        AppContext.newAppContext(this.getApplicationContext());
         setContentView(R.layout.activity_main);
     }
 
@@ -33,17 +32,13 @@ public class MainActivity extends Activity {
     }
     
     public void loginClicked(View view) {
+    	AppContext appContext = AppContext.getAppContext();
     	TextView textView = (TextView) findViewById(R.id.res_text_view);
     	textView.setText("Button pressed!");
-    	
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		String username = sharedPreferences.getString("pref_username", null);
-		String password = sharedPreferences.getString("pref_password", null);
-		this.networkUtils.setCredentials(new LoginCredentials(username, password));
 		
-    	if (this.networkUtils.testConnectivity()) {
+    	if (appContext.getNetworkUtils().testConnectivity()) {
     		textView.append("\nConnection available!");
-    		ExecuteLoginTask executeLoginTask = new ExecuteLoginTask(this.modelProxy, textView);
+    		ExecuteLoginTask executeLoginTask = new ExecuteLoginTask(appContext.getModelProxy(), textView);
     		executeLoginTask.execute();
     	} else {
     		textView.append("\nNo connection available...");
@@ -91,6 +86,7 @@ public class MainActivity extends Activity {
     		if (this.exceptionThrown != null) {
     			this.text.append("\n" + getString(R.string.something_bad_happened));
     			this.text.append(this.exceptionThrown.toString());
+    			Log.e("gCanteen", "exception", this.exceptionThrown);
     		} else {
     			if (this.logged_in) {
     				Collection<Statement> statements = this.modelProxy.getStatements();
@@ -135,6 +131,7 @@ public class MainActivity extends Activity {
     		if (this.exceptionThrown != null) {
     			this.text.append("\n" + getString(R.string.something_bad_happened));
     			this.text.append(this.exceptionThrown.toString());
+    			Log.e("gCanteen", "exception", this.exceptionThrown);
     		} else {
     			if (this.logged_in) {
     				this.text.append("\n" + getString(R.string.login_successful));

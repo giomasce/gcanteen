@@ -12,7 +12,5 @@
     <ListPreference 
         android:key="pref_provider"
         android:title="@string/provider_hint"
-        android:summary="@string/provider_summary"
-        android:entries="@array/provider_entries"
-        android:entryValues="@array/provider_entry_values"/>
+        android:summary="@string/provider_summary"/>
 </PreferenceScreen>

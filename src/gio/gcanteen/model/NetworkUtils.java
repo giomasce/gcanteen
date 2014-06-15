@@ -1,4 +1,6 @@
-package gio.gcanteen;
+package gio.gcanteen.model;
+
+import gio.gcanteen.UnauthorizedException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +43,7 @@ public class NetworkUtils {
 	
 	public SSLContext getTrustedSSLContext() throws CertificateException, IOException, KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		InputStream certIS = this.context.getResources().openRawResource(R.raw.uz_cacert);
+		InputStream certIS = this.context.getResources().openRawResource(AppContext.getAppContext().getProvider().getCertResource());
 		Certificate ca;
 		try {
 			ca = cf.generateCertificate(certIS);
@@ -139,7 +141,7 @@ public class NetworkUtils {
 		return json;
 	}
 	
-	public void setCredentials(final LoginCredentials loginCredentials) {
+	public void setCredentials(LoginCredentials loginCredentials) {
 		this.loginCredentials = loginCredentials;
 		/*Authenticator.setDefault(new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -148,7 +150,7 @@ public class NetworkUtils {
 		});*/
 	}
     
-    boolean testConnectivity() {
+    public boolean testConnectivity() {
     	ConnectivityManager connMgr = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
     	NetworkInfo info = connMgr.getActiveNetworkInfo();
     	if (info != null && info.isConnected()) return true;

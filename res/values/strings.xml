@@ -21,12 +21,6 @@
     
     <string name="settings_activity_title">Settings</string>
     
-    <string-array name="provider_entries">
-        <item>UZ</item>
-    </string-array>
-    <string-array name="provider_entry_values">
-        <item>uz</item>
-    </string-array>
-        <string name="app_logo_content_description">Application logo</string>
+    <string name="app_logo_content_description">Application logo</string>
     
 </resources>

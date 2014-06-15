@@ -1,4 +1,6 @@
-package gio.gcanteen;
+package gio.gcanteen.model;
+
+import gio.gcanteen.UnauthorizedException;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -14,9 +16,7 @@ import android.util.Log;
 public class ModelProxy {
 	
 	public final static int SUPPORTED_VERSION = 1;
-	public final static String BASE_URL = "https://uz.sns.it/mensa/api/";
 	public final static String VERSION_URL = "version.json";
-	public final static String VERSIONED_BASE_URL = BASE_URL + "v" + SUPPORTED_VERSION + "/"; 
 	public final static String STATEMENTS_URL = "statements.json";
 	
 	public final static String MIN_VERSION_TAG = "min_version";
@@ -27,16 +27,12 @@ public class ModelProxy {
 	public final static String STATEMENT_VALUE_TAG = "value";
 	public final static String STATEMENT_TIMESTAMP_TAG = "timestamp";
 	
-	private NetworkUtils networkUtils;
-	
 	private Vector<Statement> statements = null;
 	
-	public ModelProxy(NetworkUtils networkUtils) {
-		this.networkUtils = networkUtils;
-	}
-	
 	public boolean checkVersion() throws IOException, UnauthorizedException {
-		JSONObject json = this.networkUtils.connectAndGetJSON(BASE_URL + VERSION_URL);
+		Log.d("gCanteen", AppContext.getAppContext().getProvider().toString());
+		Log.d("gCanteen", AppContext.getAppContext().getProvider().getBaseUrl());
+		JSONObject json = AppContext.getAppContext().getNetworkUtils().connectAndGetJSON(AppContext.getAppContext().getProvider().getBaseUrl() + VERSION_URL);
 		if (json == null) return false;
 		
 		int min_version, max_version;
@@ -52,7 +48,7 @@ public class ModelProxy {
 	}
 	
 	public void loadStatements() throws UnauthorizedException, IOException {
-		JSONObject json = this.networkUtils.connectAndGetJSON(VERSIONED_BASE_URL + STATEMENTS_URL);
+		JSONObject json = AppContext.getAppContext().getNetworkUtils().connectAndGetJSON(this.getVersionedBaseUrl() + STATEMENTS_URL);
 		if (json == null) return;
 		
 		this.statements = new Vector<Statement>();
@@ -73,6 +69,10 @@ public class ModelProxy {
 		}
 	}
 	
+	private String getVersionedBaseUrl() {
+		return AppContext.getAppContext().getProvider().getBaseUrl() + "v" + SUPPORTED_VERSION + "/";
+	}
+
 	public Collection<Statement> getStatements() {
 		return this.statements;
 	}
